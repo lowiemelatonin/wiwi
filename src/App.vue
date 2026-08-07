@@ -416,17 +416,14 @@ const classInfo = {
   Ocultista: { basePV: 12, baseSAN: 20, basePE: 4, lvlPV: 2, lvlSAN: 5, lvlPE: 4 }
 };
 
-// Valores base calculados automaticamente
 const basePV = computed(() => classInfo[charClass.value].basePV + (classInfo[charClass.value].lvlPV * (charLvl.value - 1)) + (attributes.vig) * charLvl.value);
 const baseSAN = computed(() => classInfo[charClass.value].baseSAN + (classInfo[charClass.value].lvlSAN * (charLvl.value - 1)));
 const basePE = computed(() => classInfo[charClass.value].basePE + (classInfo[charClass.value].lvlPE * (charLvl.value - 1)) + (attributes.pre) * charLvl.value);
 
-// Bônus modificáveis inseridos pelo usuário
 const pvBonus = ref(0);
 const sanBonus = ref(0);
 const peBonus = ref(0);
 
-// Totais com Getter e Setter (permitem modificação na tela)
 const totalPV = computed({
   get: () => basePV.value + pvBonus.value,
   set: (val) => pvBonus.value = val - basePV.value
@@ -442,7 +439,6 @@ const totalPE = computed({
   set: (val) => peBonus.value = val - basePE.value
 });
 
-// Suas variáveis "current" e os "watchers" continuam iguais logo abaixo daqui...
 const currentPV = ref(totalPV.value);
 const currentSAN = ref(totalSAN.value);
 const currentPE = ref(totalPE.value);
