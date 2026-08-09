@@ -171,7 +171,17 @@
             {{ tab.label }}
           </button>
         </div>
-        <button v-if="activeTab !== 'notas'" class="add_hab" @click="openModal">Adicionar</button>
+        <div class="add_buttons">
+          <template v-if="activeTab === 'inventario'">
+              <button class="add_hab" @click="openModal('weapon')">Arma</button>
+              <button class="add_hab" @click="openModal('municao')">Munição</button>
+              <button class="add_hab" @click="openModal('armor')">Proteção</button>
+              <button class="add_hab" @click="openModal('cursed_item')">Item Amaldiçoado</button>
+              <button class="add_hab" @click="openModal('general')">Geral</button>
+          </template>
+
+          <button v-else-if="activeTab !== 'notas'" class="add_hab" @click="openModal()">Adicionar</button>
+        </div>
         <br>
 
         <div class="tab_content active">
@@ -208,13 +218,12 @@
                 <p v-if="ab.resists"><b>Resistências:</b> {{ ab.resists }}</p>
 
                 <p v-if="ab.damage"><b>Dano:</b> {{ ab.damage }}</p>
-                <p v-if="ab.critical"><b>Crítico:</b> {{ ab.critical }}</p>
-                <p v-if="ab.multiplier"><b>Multiplicador:</b> {{ ab.multiplier }}</p>
+                <p v-if="ab.critical"><b>Crítico:</b> {{ ab.critical }}<span v-if="ab.multiplier && ab.multiplier != 2">/x{{ ab.multiplier }}</span></p>
                 <p v-if="ab.bonus"><b>Ataque Bônus:</b> {{ ab.bonus }}</p>
                 <p v-if="ab.type"><b>Tipo de Dano:</b> {{ ab.type }}</p>
                 <p v-if="ab.weapon_range"><b>Alcance:</b> {{ ab.weapon_range }}</p>
                 <p v-if="ab.skill"><b>Perícia:</b> {{ ab.skill }}</p>
-                <p v-if="ab.damage_attribute"><b>Atributo de Dano:</b> {{ ab.damage_attribute }}</p>
+                <p v-if="ab.damage_attribute"><b>Atributo:</b> {{ ab.damage_attribute }}</p>
 
                 <p v-if="ab.category"><b>Categoria:</b> {{ ab.category }}</p>
                 <p v-if="ab.weight"><b>Peso:</b> {{ ab.weight }}</p>
@@ -581,7 +590,7 @@ const saveAbility = () => {
     case 'combate':
       Object.assign(abilityToSave, {
         damage: newAbility.damage,
-        critical: newAbility.critical,
+        critical: newAbility.critical || 20,
         multiplier: newAbility.multiplier,
         bonus: newAbility.bonus,
         type: newAbility.type,

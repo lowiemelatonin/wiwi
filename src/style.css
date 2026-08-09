@@ -88,10 +88,25 @@ strong, b { color: #cb415b }
 .proficiency input { text-align: left; flex: 1; min-width: 0; }
 
 /* Abas e Habilidades */
-.add_hab {
-    display: flex; margin-top: 16px; border-radius: 1px; border: 1px solid #cb415b;
-    margin-left: auto; justify-content: center; align-items: center; height: 32px; cursor: pointer; background: transparent;
+.add_buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 4px;
 }
+
+.add_hab {
+    display: flex;
+    margin: 0;
+    border-radius: 1px;
+    border: 1px solid #cb415b;
+    justify-content: center;
+    align-items: center;
+    height: 32px;
+    cursor: pointer;
+    background: transparent;
+    margin-top: 8px;
+}
+
 .buttons_tab {
     display: flex;
     flex-wrap: nowrap;
