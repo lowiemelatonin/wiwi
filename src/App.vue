@@ -351,7 +351,12 @@
         </template>
 
         <template v-else-if="activeTab === 'inventario'">
-          <h3>Novo Item</h3>
+          <h3>
+            {{ currentItemType === 'weapon' ? 'Nova Arma' : 
+              currentItemType === 'municao' ? 'Nova Munição' : 
+              currentItemType === 'armor' ? 'Nova Proteção' : 
+              currentItemType === 'cursed_item' ? 'Novo Item Amaldiçoado' : 'Novo Item' }}
+          </h3>
           
           <div class="modal_row_top">
             <div><label>Nome*</label><br><input v-model="newAbility.name" class="dark_input"></div>
@@ -362,24 +367,44 @@
                 <div class="dropdown_item" v-for="cat in dropdownOptions.category" :key="cat" @click="selectDropdown('category', cat)">{{ cat }}</div>
               </div>
             </div>
-            <div><label>Peso*</label><br><input v-model="newAbility.weight" class="dark_input"></div>
+            <div><label>Espaços*</label><br><input v-model="newAbility.weight" class="dark_input"></div>
           </div>
 
-        </template>
-        <section>
-          <label>Descrição*</label>
-          <div ref="editorRef" id="text_editor"></div>
-        </section>
+          <div v-if="currentItemType === 'weapon'" class="flex_row">
+            <div><label>Dano</label><br><input v-model="newAbility.damage" class="dark_input"></div>
+            <div><label>Crítico</label><br><input v-model="newAbility.critical" class="dark_input"></div>
+            <div><label>Multiplicador</label><br><input v-model="newAbility.multiplier" class="dark_input"></div>
+            <div><label>Alcance</label><br><input v-model="newAbility.weapon_range" class="dark_input"></div>
+          </div>
 
-        <div class="modal_actions">
-          <br>
-          <button id="save_ability" @click="saveAbility">Salvar</button>
-          <button id="cancel" @click="closeModal">Cancelar</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
+          <div v-if="currentItemType === 'armor'" class="flex_row">
+            <div><label>Defesa</label><br><input v-model="newAbility.defenseBonus" class="dark_input"></div>
+          </div>
+          
+          <div v-if="currentItemType === 'cursed_item'" class="flex_row">
+            <div class="dropdown">
+              <label>Elemento</label>
+              <button class="dropdown_button" id="btn_element" @click.stop="toggleDropdown('element')">{{ newAbility.element }}</button>
+              <div class="dropdown_content" v-show="activeDropdown === 'element'">
+                <div class="dropdown_item" v-for="el in dropdownOptions.elements" :key="el" @click="selectDropdown('element', el)">{{ el }}</div>
+              </div>
+            </div>  
+          </div>
+        </template>
+                <section>
+                  <label>Descrição*</label>
+                  <div ref="editorRef" id="text_editor"></div>
+                </section>
+
+                <div class="modal_actions">
+                  <br>
+                  <button id="save_ability" @click="saveAbility">Salvar</button>
+                  <button id="cancel" @click="closeModal">Cancelar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </template>
 
 <script setup>
 import { ref, reactive, computed, watch, nextTick, effect } from 'vue';
@@ -556,11 +581,18 @@ const newAbility = reactive({
 const toggleDropdown = (menu) => { activeDropdown.value = activeDropdown.value === menu ? null : menu; };
 const selectDropdown = (menu, value) => { newAbility[menu] = value; activeDropdown.value = null; };
 
-const openModal = async () => {
+const currentItemType = ref('general');
+
+const openModal = async (type = 'general') => {
   document.body.classList.add("no_scroll");
   isModalOpen.value = true;
+  
+  if(activeTab.value === 'inventario'){
+    currentItemType.value = type;
+  }
+
   await nextTick();
-  if (!quillInstance && editorRef.value) {
+  if(!quillInstance && editorRef.value){
     quillInstance = new Quill(editorRef.value, {
       theme: 'snow',
       modules: { toolbar: [["bold", "italic", "underline"], [{ list: "ordered" }, { list: "bullet" }], ["link"], ["clean"]] }
@@ -574,6 +606,7 @@ const closeModal = () => {
   newAbility.name = '';
   quillInstance = null;
   activeDropdown.value = null;
+  currentItemType.value = 'general';
 };
 
 const saveAbility = () => {
